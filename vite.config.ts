@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/SkillsHub/', // 👈 replace with your actual repo name
+  base: './', // Change from '/SkillsHub/' to './' 
   plugins: [react()],
   resolve: {
     alias: {
