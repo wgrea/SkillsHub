@@ -1,0 +1,11 @@
+Commands to test out on Inspect + Console:
+
+console.log(window.supabase);
+
+supabase.auth.signUp({ email: 'test2@example.com', password: 'password2' })
+
+supabase.auth.signInWithPassword({ email: 'test2@example.com', password: 'password2' })
+
+npm install
+npm run build
+npm run dev

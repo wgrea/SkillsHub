@@ -1,0 +1,259 @@
+// src/components/pages/account-page.tsx
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { User, Mail, LogOut, Settings, Lock, Brain, BookOpen, Rocket, Grid3X3 } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { SubscriptionCard } from '@/components/subscription/subscription-card';
+import { useSubscription } from '@/hooks/use-subscription';
+import { Badge } from '@/components/ui/badge';
+
+export function AccountPage() {
+  const { user, signOut } = useAuth();
+  const { /* subscription */ } = useSubscription(); // Clean, no unused variable
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6">
+            <Alert>
+              <AlertDescription>
+                Please log in to view your account settings.
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Temporary tier detection - using string type that allows all tier values
+  const currentTier = 'explore' as string;
+  const isArchitect = currentTier === 'architect';
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background py-8 px-4">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Account Settings</h1>
+          <p className="text-muted-foreground">
+            Manage your account information and subscription
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Profile Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Profile Information
+              </CardTitle>
+              <CardDescription>
+                Your account details and preferences
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Mail className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Email</p>
+                  <p className="text-sm text-muted-foreground">{user.email}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <Settings className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Account ID</p>
+                  <p className="text-sm text-muted-foreground font-mono">{user.id}</p>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={handleSignOut}
+                  className="w-full"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Subscription Card */}
+          <SubscriptionCard />
+        </div>
+
+        {/* Architect Tools Section - Only visible to Architect tier */}
+        {isArchitect ? (
+          <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-purple-900">
+                <Rocket className="h-6 w-6" />
+                Architect Tools
+                <Badge variant="secondary" className="bg-purple-100 text-purple-800">
+                  Premium
+                </Badge>
+              </CardTitle>
+              <CardDescription className="text-purple-700">
+                Advanced learning tools and AI-powered features
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* AI Roadmap Generator */}
+              <div className="flex items-start gap-4 p-4 rounded-lg border border-purple-200 bg-white">
+                <div className="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <Brain className="h-5 w-5 text-purple-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg mb-1">AI Learning Roadmap</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Get a personalized learning path generated by AI based on your goals and current skill level.
+                  </p>
+                  <Button className="bg-purple-600 hover:bg-purple-700">
+                    Generate Roadmap
+                  </Button>
+                </div>
+              </div>
+
+              {/* Priority Matrix */}
+              <div className="flex items-start gap-4 p-4 rounded-lg border border-purple-200 bg-white">
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Grid3X3 className="h-5 w-5 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg mb-1">Priority Matrix</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Visualize and prioritize your learning tasks with the Eisenhower Matrix methodology.
+                  </p>
+                  <Button variant="outline" className="border-blue-300 text-blue-700">
+                    Open Matrix
+                  </Button>
+                </div>
+              </div>
+
+              {/* Learning Journal */}
+              <div className="flex items-start gap-4 p-4 rounded-lg border border-purple-200 bg-white">
+                <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <BookOpen className="h-5 w-5 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg mb-1">Learning Journal</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Track your progress, reflections, and insights with AI-powered journaling.
+                  </p>
+                  <Button variant="outline" className="border-green-300 text-green-700">
+                    Open Journal
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          /* Upgrade Prompt for non-Architect users */
+          <Card className="border-2 border-amber-200 bg-amber-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-amber-900">
+                <Lock className="h-5 w-5" />
+                Architect Tools
+                <Badge variant="secondary" className="bg-amber-100 text-amber-800">
+                  Premium
+                </Badge>
+              </CardTitle>
+              <CardDescription className="text-amber-700">
+                Unlock advanced learning features with Architect tier
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 text-sm">
+                  <Brain className="h-4 w-4 text-amber-600" />
+                  <span>AI-Powered Learning Roadmaps</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <Grid3X3 className="h-4 w-4 text-amber-600" />
+                  <span>Priority Matrix for Task Management</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <BookOpen className="h-4 w-4 text-amber-600" />
+                  <span>AI Learning Journal & Insights</span>
+                </div>
+              </div>
+              
+              <Button 
+                className="w-full bg-amber-600 hover:bg-amber-700"
+                onClick={() => window.location.href = '/pricing'}
+              >
+                Upgrade to Architect
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Additional Features Grid */}
+        <div className="grid gap-6 md:grid-cols-3">
+          {/* Learning Progress - Available to all tiers */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm">Learning Progress</CardTitle>
+              <CardDescription>
+                Track your skill development
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">12%</div>
+              <p className="text-xs text-muted-foreground">
+                of skills completed
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Bookmarked Items - Available to all tiers */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm">Saved Items</CardTitle>
+              <CardDescription>
+                Your bookmarked content
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">8</div>
+              <p className="text-xs text-muted-foreground">
+                skills & projects saved
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Recent Activity - Available to all tiers */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm">Recent Activity</CardTitle>
+              <CardDescription>
+                Your learning timeline
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">24</div>
+              <p className="text-xs text-muted-foreground">
+                learning sessions
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
